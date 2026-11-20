@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>دستیار هوشمند آموزشی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- سایدبار -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">دا</span>
+      <div class="brand-text">
+        <strong>دستیار آموزشی</strong>
+        <span>یادگیری از روی جزوه‌های خودت</span>
+      </div>
+      <button id="darkToggle" class="icon-btn" title="حالت شب/روز">🌙</button>
+    </div>
+
+    <div class="profile-box">
+      <label>نام کاربری
+        <input type="text" id="userInput" value="guest" placeholder="مثلاً: sara" />
+      </label>
+      <label>درس
+        <input type="text" id="courseInput" placeholder="مثلاً: هوش مصنوعی" />
+      </label>
+      <label>سطح
+        <select id="levelInput">
+          <option value="مبتدی">مبتدی</option>
+          <option value="متوسط" selected>متوسط</option>
+          <option value="پیشرفته">پیشرفته</option>
+        </select>
+      </label>
+    </div>
+
+    <nav class="mode-nav" id="modeNav">
+      <button class="mode-btn active" data-mode="chat"><span class="nav-icon">💬</span> <span>چت هوشمند</span></button>
+      <button class="mode-btn" data-mode="teacher"><span class="nav-icon">👨‍🏫</span> <span>حالت تدریس</span></button>
+      <button class="mode-btn" data-mode="quiz"><span class="nav-icon">📝</span> <span>آزمون</span></button>
+      <button class="mode-btn" data-mode="summary"><span class="nav-icon">📄</span> <span>خلاصه‌ساز</span></button>
+      <button class="mode-btn" data-mode="weakness"><span class="nav-icon">🧠</span> <span>نقاط ضعف</span></button>
+      <button class="mode-btn" data-mode="planner"><span class="nav-icon">📅</span> <span>برنامه مطالعه</span></button>
+      <button class="mode-btn" data-mode="resources"><span class="nav-icon">📁</span> <span>منابع درسی</span></button>
+    </nav>
+
+    <div class="grounded-badge">
+      <span class="dot"></span>
+      <span>پاسخ‌ها فقط از روی منابعی که آپلود می‌کنی ساخته می‌شن — نه دانش عمومی مدل.</span>
+    </div>
+
+    <div class="server-status" id="serverStatus">در حال بررسی اتصال سرور...</div>
+  </aside>
+
+  <!-- محتوای اصلی -->
+  <main class="main-area">
+
+    <!-- ---------- چت ---------- -->
+    <section class="panel active" id="panel-chat">
+      <header class="panel-header">
+        <div>
+          <h1>چت هوشمند</h1>
+          <p>سؤالت رو بپرس؛ فقط بر اساس فایل‌هایی که آپلود کردی جواب می‌دم — نه دانش عمومی خودم.</p>
+        </div>
+        <div class="panel-actions">
+          <button class="btn ghost" id="newChatBtn">+ گفتگوی جدید</button>
+          <button class="btn ghost" id="historyToggleBtn">🗂 تاریخچه</button>
+        </div>
+      </header>
+
+      <div class="history-drawer" id="historyDrawer"></div>
+
+      <div class="chat-window" id="chatWindow">
+        <div class="empty-state">
+          <div class="empty-icon">💬</div>
+          <strong>هنوز گفتگویی شروع نشده</strong>
+          <p>یک سؤال درسی بنویس تا شروع کنیم — پاسخ فقط از روی منابع خودت خواهد بود.</p>
+        </div>
+      </div>
+
+      <form class="composer" id="chatForm">
+        <textarea id="chatInput" rows="1" placeholder="سؤال خودت رو بنویس..." required></textarea>
+        <button type="submit" class="btn primary">ارسال</button>
+      </form>
+    </section>
+
+    <!-- ---------- تدریس ---------- -->
+    <section class="panel" id="panel-teacher">
+      <header class="panel-header">
+        <div>
+          <h1>حالت تدریس</h1>
+          <p>یک موضوع رو انتخاب کن تا مرحله‌به‌مرحله یادت بدم.</p>
+        </div>
+      </header>
+
+      <div class="inline-form" id="teacherStartForm">
+        <input type="text" id="teacherTopicInput" placeholder="موضوع درسی، مثلاً: گرادیان کاهشی" required />
+        <button class="btn primary" id="teacherStartBtn">شروع آموزش</button>
+      </div>
+
+      <div class="chat-window" id="teacherWindow">
+        <div class="empty-state">
+          <div class="empty-icon">👨‍🏫</div>
+          <strong>آماده‌ی شروع تدریس</strong>
+          <p>موضوع رو بالا بنویس و «شروع آموزش» رو بزن.</p>
+        </div>
+      </div>
+
+      <form class="composer hidden" id="teacherContinueForm">
+        <textarea id="teacherContinueInput" rows="1" placeholder="سؤال بپرس یا بنویس «ادامه بده»..."></textarea>
+        <button type="submit" class="btn primary">ارسال</button>
+      </form>
+    </section>
+
+    <!-- ---------- آزمون ---------- -->
+    <section class="panel" id="panel-quiz">
+      <header class="panel-header">
+        <div>
+          <h1>آزمون</h1>
+          <p>یک آزمون از روی جزوه‌های آپلودشده بساز و بلافاصله جواب بده.</p>
+        </div>
+      </header>
+
+      <div class="card form-card" id="quizGenerateCard">
+        <div class="field-row">
+          <label>موضوع آزمون
+            <input type="text" id="quizTopicInput" placeholder="مثلاً: بیش‌برازش" required />
+          </label>
+          <label class="narrow">تعداد سؤال
+            <input type="number" id="quizNumInput" value="5" min="1" max="15" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="checkbox"><input type="checkbox" value="multiple_choice" checked> چهارگزینه‌ای</label>
+          <label class="checkbox"><input type="checkbox" value="true_false" checked> درست/غلط</label>
+          <label class="checkbox"><input type="checkbox" value="essay"> تشریحی</label>
+        </div>
+        <button class="btn primary" id="quizGenerateBtn">ساخت آزمون</button>
+      </div>
+
+      <div id="quizArea"></div>
+    </section>
+
+    <!-- ---------- خلاصه‌ساز ---------- -->
+    <section class="panel" id="panel-summary">
+      <header class="panel-header">
+        <div>
+          <h1>خلاصه‌ساز</h1>
+          <p>یک موضوع یا بخش رو بگو تا از روی منابع آپلودشده خلاصه‌اش کنم.</p>
+        </div>
+      </header>
+
+      <div class="inline-form">
+        <input type="text" id="summaryTopicInput" placeholder="موضوع یا بخش موردنظر، مثلاً: شبکه عصبی" required />
+        <button class="btn primary" id="summaryBtn">خلاصه کن</button>
+      </div>
+
+      <div id="summaryResult" class="result-box"></div>
+    </section>
+
+    <!-- ---------- نقاط ضعف ---------- -->
+    <section class="panel" id="panel-weakness">
+      <header class="panel-header">
+        <div>
+          <h1>نقاط ضعف</h1>
+          <p>بر اساس آزمون‌های قبلی، موضوعاتی که بیشتر نیاز به مرور دارن رو نشون می‌دم.</p>
+        </div>
+        <button class="btn ghost" id="weaknessRefreshBtn">🔄 تحلیل کن</button>
+      </header>
+
+      <div id="weaknessResult" class="result-box"></div>
+    </section>
+
+    <!-- ---------- برنامه مطالعه ---------- -->
+    <section class="panel" id="panel-planner">
+      <header class="panel-header">
+        <div>
+          <h1>برنامه مطالعه</h1>
+          <p>بگو تا امتحان چقدر وقت داری و روزی چند ساعت می‌تونی بخونی، برات برنامه می‌سازم.</p>
+        </div>
+      </header>
+
+      <div class="card form-card">
+        <div class="field-row">
+          <label>درس
+            <input type="text" id="plannerCourseInput" placeholder="مثلاً: هوش مصنوعی" required />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="narrow">روزهای باقی‌مانده
+            <input type="number" id="plannerDaysInput" value="7" min="1" max="60" />
+          </label>
+          <label class="narrow">ساعت مطالعه روزانه
+            <input type="number" id="plannerHoursInput" value="2" min="0.5" max="12" step="0.5" />
+          </label>
+        </div>
+        <button class="btn primary" id="plannerBtn">ساخت برنامه</button>
+      </div>
+
+      <div id="plannerResult"></div>
+    </section>
+
+    <!-- ---------- منابع درسی ---------- -->
+    <section class="panel" id="panel-resources">
+      <header class="panel-header">
+        <div>
+          <h1>منابع درسی</h1>
+          <p>فایل‌های PDF جزوه یا کتاب (فارسی یا انگلیسی) رو اینجا آپلود کن — دستیار همه‌جا فقط از همین فایل‌ها استفاده می‌کنه.</p>
+        </div>
+      </header>
+
+      <div class="card upload-card" id="dropZone">
+        <input type="file" id="fileInput" accept="application/pdf" hidden />
+        <div class="upload-icon">📄</div>
+        <p><strong>فایل PDF رو بکش و رها کن</strong> یا کلیک کن</p>
+        <label class="tiny-field">درس مربوطه
+          <input type="text" id="uploadCourseInput" placeholder="مثلاً: هوش مصنوعی" />
+        </label>
+        <span class="small muted" id="uploadStatus"></span>
+      </div>
+
+      <div class="doc-list" id="docList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
